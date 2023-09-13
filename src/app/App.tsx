@@ -25,6 +25,7 @@ const Home = lazy(() => import("~/pages/home/Layout"))
 const Manage = lazy(() => import("~/pages/manage"))
 const Login = lazy(() => import("~/pages/login"))
 const Test = lazy(() => import("~/pages/test"))
+const Music = lazy(() => import("~/pages/music"))
 
 const App: Component = () => {
   const t = useT()
@@ -81,6 +82,7 @@ const App: Component = () => {
         fallback={
           <Routes base={base_path}>
             <Route path="/@test" component={Test} />
+            <Route path="/@music" component={Music} />
             <Route path="/@login" component={Login} />
             <Route
               path="/@manage/*"

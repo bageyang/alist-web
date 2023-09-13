@@ -116,7 +116,8 @@
   },
   "footer": {
     "powered_by": "Powered by AList",
-    "manage": "Manage"
+    "manage": "Manage",
+    "music": "音乐"
   },
   "search": {
     "search": "Search",

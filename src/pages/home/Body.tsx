@@ -18,7 +18,6 @@ export const Body = () => {
       >
         <Nav />
         <Obj />
-        <Readme />
       </VStack>
     </Container>
   )

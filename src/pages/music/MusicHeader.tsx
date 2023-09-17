@@ -1,10 +1,7 @@
 import {
   Center,
   HStack,
-  Icon,
   Image,
-  Kbd,
-  Breadcrumb,
   Input,
   useColorModeValue,
   Button,
@@ -13,19 +10,26 @@ import { Container } from "~/pages/home/Container"
 import { CenterLoading } from "~/components"
 import { createSignal, Show } from "solid-js"
 import { getSetting, objStore, State } from "~/store"
-import { bus } from "~/utils"
-import { BsSearch } from "solid-icons/bs"
-import { isMac } from "~/utils/compatibility"
-import { Layout } from "~/pages/home/header/layout"
 import { useT } from "~/hooks"
+import { bus } from "~/utils"
 
 const MusicHeader = () => {
   const logos = getSetting("logo").split("\n")
   const logo = useColorModeValue(logos[0], logos.pop())
   const t = useT()
   const [musicKeywords, setMusicKeywords] = createSignal("")
+  const [lastClick, setLastClick] = createSignal(Date.now())
   const searchMusic = async () => {
-    console.log(musicKeywords())
+    let s = musicKeywords()
+    if (s.trim()) {
+      const timeNow = Date.now()
+      if (lastClick() && timeNow - lastClick() < 1000) {
+        return
+      } else {
+        setLastClick(timeNow)
+        bus.emit("musicKeywords", musicKeywords())
+      }
+    }
   }
   return (
     <Center

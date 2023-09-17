@@ -39,6 +39,23 @@ export type FsGetResp = Resp<
   }
 >
 
+export type MusicInfo = {
+  NAME: string
+  ALBUM: string
+  ARTIST: string
+  DC_TARGETID: string
+  DURATION: string
+  hts_MVPIC: string
+  MUSICRID: string
+  FORMATS: string
+  checked: boolean
+}
+
+export type MusicRsp = Resp<{
+  TOTAL: number
+  abslist: MusicInfo[]
+}>
+
 export type EmptyResp = Resp<{}>
 
 export type PResp<T> = Promise<Resp<T>>

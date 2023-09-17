@@ -12,64 +12,59 @@ import {
   VStack,
   Box,
   CheckboxGroup,
-  CheckboxPrimitive,
-  css,
-  CheckboxPrimitiveIndicator,
   Checkbox,
   Flex,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
 } from "@hope-ui/solid"
 import { Container } from "~/pages/home/Container"
 import { CenterLoading } from "~/components"
-import { createMemo, createSignal, For, Show } from "solid-js"
+import { musicSearch } from "~/utils/music_api"
+import debounce from "lodash.debounce"
+import { createMemo, createSignal, For, Index, Show } from "solid-js"
 import { useT } from "~/hooks"
 import { IconCheck } from "@hope-ui/solid/dist/components/icons/IconCheck"
+import { bus } from "~/utils"
+import { MusicInfo } from "~/types"
+import ImageLayout from "~/pages/home/folder/Images"
+import { ImageItem } from "~/pages/home/folder/ImageItem"
 
 const MusicList = () => {
   const t = useT()
-  const checkboxRootStyles = css({
-    rounded: "$md",
-    border: "1px solid $neutral7",
-    shadow: "$sm",
-    bg: "$loContrast",
-    px: "$4",
-    py: "$3",
-    w: "$full",
-    cursor: "pointer",
-
-    _focus: {
-      borderColor: "$info7",
-      shadow: "0 0 0 3px $colors$info5",
-    },
-
-    _checked: {
-      borderColor: "transparent",
-      bg: "#0c4a6e",
-      color: "white",
-    },
+  const [searchRet, setSearchRet] = createSignal({
+    data: [] as MusicInfo[],
+    total: 0,
   })
-  const checkboxIndicatorStyles = css({
-    rounded: "$sm",
-    border: "1px solid $neutral7",
-    bg: "$whiteAlpha7",
-    boxSize: "$5",
-
-    _groupChecked: {
-      borderColor: "transparent",
-    },
-  })
-  const [musicKeywords, setMusicKeywords] = createSignal("")
-  const searchMusic = async () => {
-    console.log(musicKeywords())
+  const searchHandler = (musicKeywords: string) => {
+    musicSearch(musicKeywords, 10, 1).then((rsp) => {
+      if (rsp.code == 200) {
+        setSearchRet({ data: rsp.data.abslist, total: rsp.data.TOTAL })
+        console.log("数据大小", rsp.data.TOTAL)
+      }
+    })
   }
-  const searchList = [
-    {
-      id: 1,
-      name: "music1",
-      artlist: "周杰伦",
-      album: "牛仔很忙",
-      picUrl: "https://cdn.jsdelivr.net/gh/alist-org/logo@main/logo.svg",
-    },
-  ]
+  const debouncedSearchHandler = debounce(searchHandler, 500)
+  bus.on("musicKeywords", debouncedSearchHandler)
+
+  // 处理复选框状态改变的函数
+  const handleChange = (event: { target: { checked: boolean } }) => {
+    console.log(event.target.checked)
+    let data = searchRet().data.map((item) => ({
+      ...item,
+      checked: event.target.checked,
+      name: item.NAME + "a",
+    }))
+    let total = searchRet().total
+    setSearchRet({ data: data, total: total })
+    searchRet().data.forEach((e) => {
+      console.log(e.checked)
+    })
+  }
+
   return (
     <Container>
       <VStack
@@ -81,26 +76,45 @@ const MusicList = () => {
         w="$full"
         gap="$4"
       >
-        <CheckboxGroup>
-          <VStack spacing="$4">
-            <CheckboxGroup
-              colorScheme="success"
-              defaultValue={["luffy", "sanji"]}
-            >
-              <HStack spacing="$5">
-                <For each={searchList}>
-                  {(preference) => (
-                    <HStack spacing="24px">
-                      <Checkbox value="sanji">Sanji</Checkbox>
-                      <Box w="170px" h="$10" bg="$danger9" />
-                      <Box w="180px" h="$10" bg="$danger9" />
-                    </HStack>
+        <VStack spacing="$4">
+          <CheckboxGroup colorScheme="success">
+            <Table>
+              <Thead>
+                <Tr>
+                  <Th>
+                    <input type="checkbox" onChange={handleChange} />
+                  </Th>
+                  <Th>歌曲名</Th>
+                  <Th>歌手</Th>
+                  <Th>专辑</Th>
+                  <Th>图片</Th>
+                  <Th>时长</Th>
+                </Tr>
+              </Thead>
+
+              <Tbody>
+                {/* todo 组件有问题 */}
+                <Index each={searchRet().data} fallback={<div>Loading...</div>}>
+                  {(info) => (
+                    <Tr>
+                      <Td>
+                        <Checkbox checked={info().checked}></Checkbox>
+                      </Td>
+                      <Td>{info().NAME}</Td>
+                      <Td>{info().ARTIST}</Td>
+                      <Td>{info().ALBUM}</Td>
+                      <Td>
+                        {" "}
+                        <Image h="$full" w="auto" src={info().hts_MVPIC} />
+                      </Td>
+                      <Td>{info().DURATION}</Td>
+                    </Tr>
                   )}
-                </For>
-              </HStack>
-            </CheckboxGroup>
-          </VStack>
-        </CheckboxGroup>
+                </Index>
+              </Tbody>
+            </Table>
+          </CheckboxGroup>
+        </VStack>
       </VStack>
     </Container>
   )

@@ -12,3 +12,7 @@ export const musicSearch = (
     pageNo: pageNo,
   })
 }
+
+export const addMusicTask = (musicIds: string[]): Promise<Boolean> => {
+  return r.post("/music/addTask", musicIds)
+}

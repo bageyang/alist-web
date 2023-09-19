@@ -31,35 +31,12 @@ const MusicList = () => {
   })
   const [checkedSize, setCheckedSize] = createSignal(0)
   const searchHandler = (musicKeywords: string) => {
-    // musicSearch(musicKeywords, 10, 1).then((rsp) => {
-    //   if (rsp.code == 200) {
-    //     let length = rsp.data.abslist.length;
-    //     setCheckedItems(new Array(length).fill(false))
-    //     setSearchRet({ data: rsp.data.abslist, total: rsp.data.TOTAL })
-    //     console.log("数据大小", rsp.data.TOTAL)
-    //   }
-    // })
-    let m: MusicInfo = {
-      NAME: "达尔文",
-      ALBUM: "JJ的咖啡调调,\u0026nbsp;Vol.\u0026nbsp;2",
-      ARTIST: "林俊杰",
-      DC_TARGETID: "260712441",
-      DURATION: "246",
-      hts_MVPIC: "https://img4.kuwo.cn/wmvpic/324/24/38/2955906445.jpg",
-      MUSICRID: "MUSIC_260712441",
-      FORMATS: "OGG192|OGG96|AAC96|WMA96|WMA128|MP3128|MP3H|AAC48|ALFLAC|EXS",
-    }
-    let m2: MusicInfo = {
-      NAME: "达尔文2",
-      ALBUM: "JJ的咖啡调调,\u0026nbsp;Vol.\u0026nbsp;2",
-      ARTIST: "林俊杰",
-      DC_TARGETID: "2607124412",
-      DURATION: "246",
-      hts_MVPIC: "https://img4.kuwo.cn/wmvpic/324/24/38/2955906445.jpg",
-      MUSICRID: "MUSIC_260712441",
-      FORMATS: "OGG192|OGG96|AAC96|WMA96|WMA128|MP3128|MP3H|AAC48|ALFLAC|EXS",
-    }
-    setSearchRet({ data: [m, m2], total: 2 })
+    musicSearch(musicKeywords, 10, 1).then((rsp) => {
+      if (rsp.code == 200) {
+        setSearchRet({ data: rsp.data.abslist, total: rsp.data.TOTAL })
+        console.log("数据大小", rsp.data.TOTAL)
+      }
+    })
   }
   const debouncedSearchHandler = debounce(searchHandler, 500)
   bus.on("musicKeywords", debouncedSearchHandler)
@@ -88,11 +65,9 @@ const MusicList = () => {
     setCheckedSize(count)
   }
   const addDownloadQueue = () => {
-    let checkedMusicIds = searchRet()
-      .data.filter((e) => e.checked)
-      .map((e) => e.DC_TARGETID)
+    let checkedMusics = searchRet().data.filter((e) => e.checked)
     handleAllCheck(false)
-    addMusicTask(checkedMusicIds).then((e) => {
+    addMusicTask(checkedMusics).then((e) => {
       console.log(e)
     })
   }

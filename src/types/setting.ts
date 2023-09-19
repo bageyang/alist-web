@@ -9,6 +9,7 @@ export enum Group {
   ARIA2,
   INDEX,
   SSO,
+  MUSIC,
 }
 export enum Flag {
   PUBLIC,

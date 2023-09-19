@@ -85,5 +85,10 @@
   "version": "版本",
   "video_autoplay": "自动播放视频",
   "video_types": "视频类型",
-  "webauthn_login_enabled": "启用Webauthn登录"
+  "webauthn_login_enabled": "启用Webauthn登录",
+  "redis_addr": "redis 地址",
+  "redis_psd": "redis 密码",
+  "redis_db": "redis db",
+  "music_upload_path": "音乐存储目录",
+  "music_cache_path": "音乐临时目录"
 }

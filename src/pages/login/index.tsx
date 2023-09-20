@@ -246,19 +246,6 @@ const Login = () => {
             {t("login.login")}
           </Button>
         </HStack>
-        <Button
-          w="$full"
-          colorScheme="accent"
-          onClick={() => {
-            changeToken()
-            to(
-              decodeURIComponent(searchParams.redirect || base_path || "/"),
-              true,
-            )
-          }}
-        >
-          {t("login.use_guest")}
-        </Button>
         <Flex
           mt="$2"
           justifyContent="space-evenly"

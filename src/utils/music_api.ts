@@ -1,5 +1,5 @@
 import { r } from "."
-import { MusicInfo, MusicRsp } from "~/types"
+import { MusicInfo, MusicRsp, ProcessRet, ProcessRsp } from "~/types"
 
 export const musicSearch = (
   keywords: string,
@@ -15,4 +15,12 @@ export const musicSearch = (
 
 export const addMusicTask = (musics: MusicInfo[]): Promise<Boolean> => {
   return r.post("/music/addTask", { musicList: musics })
+}
+
+export const listProcessList = (): Promise<ProcessRsp> => {
+  return r.post("/music/listTask")
+}
+
+export const cleanDownFailTask = (): Promise<void> => {
+  return r.post("/music/cleanFailTask")
 }

@@ -9,10 +9,6 @@ import { Toolbar } from "./toolbar/Toolbar"
 
 const Index = () => {
   useTitle(getSetting("site_title"))
-  const announcement = getSetting("announcement")
-  if (announcement) {
-    notify.render(() => <Markdown children={announcement} />)
-  }
   return (
     <>
       <Header />

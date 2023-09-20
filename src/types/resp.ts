@@ -49,11 +49,17 @@ export type MusicInfo = {
   MUSICRID: string
   FORMATS: string
   checked: boolean
+  extra: string
 }
 
 export type MusicRsp = Resp<{
   TOTAL: number
   abslist: MusicInfo[]
+}>
+
+export type ProcessRsp = Resp<{
+  processList: MusicInfo[]
+  errorList: MusicInfo[]
 }>
 
 export type EmptyResp = Resp<{}>

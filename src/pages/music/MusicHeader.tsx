@@ -12,25 +12,21 @@ import { createSignal, Show } from "solid-js"
 import { getSetting, objStore, State } from "~/store"
 import { useT } from "~/hooks"
 import { bus } from "~/utils"
+import debounce from "lodash.debounce"
 
 const MusicHeader = () => {
   const logos = getSetting("logo").split("\n")
   const logo = useColorModeValue(logos[0], logos.pop())
   const t = useT()
   const [musicKeywords, setMusicKeywords] = createSignal("")
-  const [lastClick, setLastClick] = createSignal(Date.now())
-  const searchMusic = async () => {
+  const searchMusic = () => {
     let s = musicKeywords()
     if (s.trim()) {
-      const timeNow = Date.now()
-      if (lastClick() && timeNow - lastClick() < 1000) {
-        return
-      } else {
-        setLastClick(timeNow)
-        bus.emit("musicKeywords", musicKeywords())
-      }
+      bus.emit("musicKeywords", musicKeywords())
     }
   }
+  const debouncedSearch = debounce(searchMusic, 300)
+
   return (
     <Center
       class="header"
@@ -55,7 +51,9 @@ const MusicHeader = () => {
                 setMusicKeywords(e.currentTarget.value)
               }}
             />
-            <Button onClick={() => searchMusic()}>{t("global.confirm")}</Button>
+            <Button onClick={() => debouncedSearch()}>
+              {t("global.confirm")}
+            </Button>
           </HStack>
         </HStack>
       </Container>
